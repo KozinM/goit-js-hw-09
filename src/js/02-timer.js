@@ -4,6 +4,7 @@ import flatpickr from "flatpickr";
 // Дополнительный импорт стилей
 import "flatpickr/dist/flatpickr.min.css";
 
+
 //variables initialization for document elements and other purposes
 const refs = {
     "dateInput": document.querySelector("#datetime-picker"),
@@ -26,6 +27,11 @@ const refs = {
   //disabling start button
   refs.startBtn.disabled = true;
 
+  //creating variable for timer
+  let choosenTime;
+
+  //console.log(addLeadingZero(4));
+
   //console.log(refs.startBtn);
 
   //creating flatpickr instance
@@ -34,17 +40,51 @@ const refs = {
   flatpickrInstance.config.onClose.push(function (selectedDates) { 
     if (selectedDates[0]<=Date.now()) {return window.alert("Pick up date in the future!");}
         else {
-          console.log(convertMs(selectedDates[0]-Date.now()));
+          console.log("I'm here:"+(selectedDates[0]-Date.now()));
+          choosenTime = selectedDates[0];
+          refs.startBtn.disabled = false;
+          
         }});
  
+  refs.startBtn.addEventListener('click', clickOnStartBtnHandler);
+        
+  
+  //creating timer object
+  const timer = {
+    intervalId: null,
+    isActive: false,
+  
+    start() {
+      if (this.isActive) {
+        return;
+      }
+      const startPoint = choosenTime;
+      this.isActive = true;
+  
+      
+      const currentTime = Date.now();
+      
+      console.log("I've started"+"current time: "+ currentTime + "  start point: " + startPoint + "  and minus" + (startPoint-currentTime));
 
-/*   flatpickr.config.onClose.push(isItNowOrFuture);
+      while (currentTime<startPoint)
+      {
+        console.log("I'm doing things!!");
+        textTimerUpdate(convertMs(currentTime-startPoint));
+      }
 
-  //definition of the function isItNowOrFuture
+      this.isActive = false;
+        textTimerUpdate(convertMs(0));
+        return;
+    },
+  };
 
-  function isItNowOrFuture(selectedDates) {
-   console.log(selectedDates[0]-Date.now());
-  }; */
+
+  //defining handler for clicks on the start button
+  
+  function clickOnStartBtnHandler() {
+      console.log("And here");
+      timer.start();
+  }
 
 
 
@@ -68,7 +108,23 @@ const refs = {
     return { days, hours, minutes, seconds };
   }
   
-  //function examples
-  console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-  console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-  console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
+
+  //defining function for time to be from 4 to 04
+  function addLeadingZero(value) {
+    return String(value).padStart(2, '0');
+  }
+
+  //defining function for text timer update
+  function textTimerUpdate ({ days, hours, minutes, seconds }) {
+    refs.dataDays.textContent = addLeadingZero(days);
+    refs.dataHours.textContent = addLeadingZero(hours);
+    refs.dataMinutes.textContent = addLeadingZero(minutes);
+    refs.dataSeconds.textContent = addLeadingZero(seconds);
+  }
+
+
+
+  //function convertMs examples
+  //console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
+  //console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
+  //console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
