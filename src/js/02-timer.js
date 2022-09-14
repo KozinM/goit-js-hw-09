@@ -28,11 +28,8 @@ const refs = {
   refs.startBtn.disabled = true;
 
   //creating variable for timer
-  let choosenTime;
+  let choosenTime = null;
 
-  //console.log(addLeadingZero(4));
-
-  //console.log(refs.startBtn);
 
   //creating flatpickr instance
   const flatpickrInstance = flatpickr(refs.dateInput, refs.flatOptions);
@@ -46,8 +43,8 @@ const refs = {
           
         }});
  
-  refs.startBtn.addEventListener('click', clickOnStartBtnHandler);
-        
+  //adding listiner on the start button
+  refs.startBtn.addEventListener('click', clickOnStartBtnHandler);      
   
   //creating timer object
   const timer = {
@@ -58,23 +55,20 @@ const refs = {
       if (this.isActive) {
         return;
       }
-      const startPoint = choosenTime;
+      const timeToStop = choosenTime;
       this.isActive = true;
   
-      
-      const currentTime = Date.now();
-      
-      console.log("I've started"+"current time: "+ currentTime + "  start point: " + startPoint + "  and minus" + (startPoint-currentTime));
-
-      while (currentTime<startPoint)
-      {
-        console.log("I'm doing things!!");
-        textTimerUpdate(convertMs(currentTime-startPoint));
-      }
-
-      this.isActive = false;
-        textTimerUpdate(convertMs(0));
-        return;
+      this.intervalId = setInterval(() => {
+        const currentTime = Date.now();
+        const timeLeft = timeToStop - currentTime;
+        if (timeLeft < 0) {
+          clearInterval(this.intervalId);
+          this.isActive = false;
+          return;
+        }
+        const timeLeftModified = convertMs(timeLeft);
+        textTimerUpdate(timeLeftModified);
+      }, 1000);
     },
   };
 
@@ -82,7 +76,6 @@ const refs = {
   //defining handler for clicks on the start button
   
   function clickOnStartBtnHandler() {
-      console.log("And here");
       timer.start();
   }
 
@@ -121,6 +114,7 @@ const refs = {
     refs.dataMinutes.textContent = addLeadingZero(minutes);
     refs.dataSeconds.textContent = addLeadingZero(seconds);
   }
+
 
 
 
