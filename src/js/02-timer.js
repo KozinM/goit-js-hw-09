@@ -1,4 +1,7 @@
-//library conection
+//importing library for notifications
+import Notiflix from 'notiflix';
+
+//flatpickr library conection
 // Описан в документации
 import flatpickr from "flatpickr";
 // Дополнительный импорт стилей
@@ -35,7 +38,7 @@ const refs = {
   const flatpickrInstance = flatpickr(refs.dateInput, refs.flatOptions);
   flatpickrInstance.clear();
   flatpickrInstance.config.onClose.push(function (selectedDates) { 
-    if (selectedDates[0]<=Date.now()) {return window.alert("Pick up date in the future!");}
+    if (selectedDates[0]<=Date.now()) {return Notiflix.Notify.failure(`❌ Pick up date in the future!`)/* window.alert("Pick up date in the future!") */;}
         else {
           console.log("I'm here:"+(selectedDates[0]-Date.now()));
           choosenTime = selectedDates[0];
@@ -76,6 +79,7 @@ const refs = {
   //defining handler for clicks on the start button
   
   function clickOnStartBtnHandler() {
+     Notiflix.Notify.success(`✅ Lets go!!!`)
       timer.start();
   }
 
